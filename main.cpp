@@ -200,6 +200,19 @@ public:
         sub->parent = t;
     }
 };
+Task *closerTask(Task *T, Task *T1) {
+    if (T->deadline.leftDays == T1->deadline.leftDays) {
+        if (T->deadline.hour > T1->deadline.hour)
+            return T1;
+        else if (T->deadline.hour < T1->deadline.hour)
+            return T;
+        else
+            T->deadline.minute > T1->deadline.minute ? T1 : T;
+    }
+    if (T->deadline.leftDays > T1->deadline.leftDays)
+        return T1;
+    return T;
+}
 class TreeRoot {
 public:
     Task *itself;
@@ -219,19 +232,28 @@ public:
             x->rightSibling = t;
         }
         t->parent = itself;
+        SortTasks(t);
     }
-    void SortTasks() {
+    void SortTasks(Task *T) {
         if (leftChild->rightSibling == nullptr)
             return;
-        Task *T = leftChild, *Tn;
-        while (T->rightSibling != nullptr) {
-            Tn = T->rightSibling;
-            while (Tn != nullptr) {
-
-                Tn = Tn->rightSibling;
+        Task *t = leftChild;
+        while (t->rightSibling != nullptr) {
+            if(T == closerTask(t,T)){
+                switching(t,T);
             }
-            T = T->rightSibling;
+            t = t->rightSibling;
         }
+        //     Tn = T->rightSibling;
+        //     while (Tn != nullptr) {
+        //         t = closerTask(T, Tn);
+        //         if (t == Tn)
+        //             switching(T, Tn);
+        //         Tn = Tn->rightSibling;
+        //     }
+        //     T = T->rightSibling;
+        // }
+
     }
     void switching(Task *T, Task *Tn) {
         Task *Tpre, *Trs = T->rightSibling, *Tnpre, *Tnrs = Tn->rightSibling;
@@ -261,8 +283,9 @@ void showCloserTask(Task *T) {
         return;
     cout << "Subtasks:\n";
     Subtask *sub = T->subtasks.tail;
-    while(sub!=nullptr){
-        cout<<"    "<<sub->name<<", "<<sub->description<<", "<<sub->status<<", "<<sub->deadline.date<<endl;
+    while (sub != nullptr) {
+        cout << "    " << sub->name << ", " << sub->description << ", "
+             << sub->status << ", " << sub->deadline.date << endl;
         sub = sub->next;
     }
 }
