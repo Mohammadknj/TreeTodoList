@@ -20,8 +20,8 @@ int leftDaysCalculator(int year, int month, int day) {
     result += day - currentDay;
     return result;
 }
-int isTaskOrSubtask=1;
-bool checkCorrectAddingCommand(int i, string str){
+int isTaskOrSubtask = 1;
+bool checkCorrectAddingCommand(int i, string str) {
     if (isTaskOrSubtask == 1) {
         string s = "add task ";
         for (int j = 0; j < i; ++j) {
@@ -30,7 +30,7 @@ bool checkCorrectAddingCommand(int i, string str){
                 return false;
             }
         }
-    }else{
+    } else {
         string s = "add subtask ";
         for (int j = 0; j < i; ++j) {
             if (s[j] != str[j]) {
@@ -45,11 +45,11 @@ vector<string> addTaskExtractInformations(string str) {
     vector<string> result;
     string word;
     int i = 9;
-    if (isTaskOrSubtask == 2){
+    if (isTaskOrSubtask == 2) {
         i += 3;
     }
-    if(!checkCorrectAddingCommand(i,str)){
-        cout<<"Error! You Entered a wrong command\n";
+    if (!checkCorrectAddingCommand(i, str)) {
+        cout << "Error! You Entered a wrong command\n";
         return {};
     }
     while (i < int(str.length())) {
@@ -100,9 +100,11 @@ public:
         month = arr[1];
         day = arr[2];
         leftDays = leftDaysCalculator(year, month, day);
-        string min = minute<10 ? "0"+to_string(minute) : to_string(minute);
-        string hr = hour<10 ? "0"+to_string(hour) : to_string(hour);hr+=":";
-        date = to_string(year) + '/' + to_string(month) + '/' + to_string(day) + " " +hr+min;
+        string min = minute < 10 ? "0" + to_string(minute) : to_string(minute);
+        string hr = hour < 10 ? "0" + to_string(hour) : to_string(hour);
+        hr += ":";
+        date = to_string(year) + '/' + to_string(month) + '/' + to_string(day) +
+               " " + hr + min;
     }
 };
 class Subtask {
@@ -118,7 +120,8 @@ public:
         cin.ignore();
         getline(cin, str);
         vector<string> ss = addTaskExtractInformations(str);
-        if(isTaskOrSubtask == 0) return;
+        if (isTaskOrSubtask == 0)
+            return;
         name = ss[0];
         description = ss[1];
         status = ss[3];
@@ -139,7 +142,7 @@ public:
         tail = nullptr;
         size = 0;
     }
-    void insert(Subtask *sub, Task*t) {
+    void insert(Subtask *sub, Task *t) {
         sub->parent = t;
         sub->previous = head;
         if (head == nullptr) {
@@ -182,16 +185,17 @@ public:
         cout << "Enter task: ";
         cin.ignore();
         getline(cin, str);
-        vector<string>ss = addTaskExtractInformations(str);
-        if(isTaskOrSubtask == 0) return;
+        vector<string> ss = addTaskExtractInformations(str);
+        if (isTaskOrSubtask == 0)
+            return;
         name = ss[0];
         description = ss[1];
         status = ss[3];
         deadline.makeDeadline(ss[2]);
     }
-    void addSubtask(Subtask *sub, Task*t) {
-        subtasks.insert(sub,t);
-        if(t->subtasks.size == 1)
+    void addSubtask(Subtask *sub, Task *t) {
+        subtasks.insert(sub, t);
+        if (t->subtasks.size == 1)
             t->leftChild = sub;
         sub->parent = t;
     }
@@ -215,37 +219,52 @@ public:
             x->rightSibling = t;
         }
         t->parent = itself;
-
     }
-    void SortTasks(){
-        if(leftChild->rightSibling == nullptr) return;
-        Task*T = leftChild,*Tn;
-        while(T->rightSibling!=nullptr){
+    void SortTasks() {
+        if (leftChild->rightSibling == nullptr)
+            return;
+        Task *T = leftChild, *Tn;
+        while (T->rightSibling != nullptr) {
             Tn = T->rightSibling;
-            while(Tn != nullptr){
+            while (Tn != nullptr) {
 
                 Tn = Tn->rightSibling;
             }
             T = T->rightSibling;
         }
     }
-    void switching(Task*T,Task*Tn){
-        Task* Tpre,*Trs=T->rightSibling,*Tnpre,*Tnrs=Tn->rightSibling;
-        if(T == leftChild) Tpre = nullptr;
-        Task*t = leftChild;
-        while(t->rightSibling != T) t=t->rightSibling;
-        if(Tpre!=nullptr) Tpre = t;
-        while(t->rightSibling != Tn) t=t->rightSibling;
+    void switching(Task *T, Task *Tn) {
+        Task *Tpre, *Trs = T->rightSibling, *Tnpre, *Tnrs = Tn->rightSibling;
+        if (T == leftChild)
+            Tpre = nullptr;
+        Task *t = leftChild;
+        while (t->rightSibling != T)
+            t = t->rightSibling;
+        if (Tpre != nullptr)
+            Tpre = t;
+        while (t->rightSibling != Tn)
+            t = t->rightSibling;
         Tnpre = t;
-        if(Tpre!=nullptr) Tpre->rightSibling = Tn;
+        if (Tpre != nullptr)
+            Tpre->rightSibling = Tn;
         T->rightSibling = Tnrs;
         Tn->rightSibling = Trs;
         Tnpre->rightSibling = T;
     }
 };
-void showCloserTask(Task *T){
-    cout<<"Task:\n    Name: "<<T->name<<", Description: "<<T->description<<", Status: "<<T->status<<endl;
-    cout<<"    It's "<<T->deadline.leftDays<<" days left. Deadline: "<<T->deadline.date<<endl;
+void showCloserTask(Task *T) {
+    cout << "Task:\n    Name: " << T->name << ", Description: " << T->description
+         << ", Status: " << T->status << endl;
+    cout << "    It's " << T->deadline.leftDays
+         << " days left. Deadline: " << T->deadline.date << endl;
+    if (T->subtasks.size == 0)
+        return;
+    cout << "Subtasks:\n";
+    Subtask *sub = T->subtasks.tail;
+    while(sub!=nullptr){
+        cout<<"    "<<sub->name<<", "<<sub->description<<", "<<sub->status<<", "<<sub->deadline.date<<endl;
+        sub = sub->next;
+    }
 }
 void menu(TreeRoot *Root) {
     int choice;
@@ -253,8 +272,8 @@ void menu(TreeRoot *Root) {
         cout << "menu:" << endl;
         cout << "1.Add task" << endl;
         cout << "2.Add subtask" << endl;
-        // cout << "3.bazyabi etelaat" << endl;
-        // cout << "4.namayesh jadval doroos va daneshjoo" << endl;
+        cout << "3.Change subtask status" << endl;
+        cout << "4.Show task with higher priority" << endl;
         // cout << "5.sabte etelaat dar file matni" << endl;
         // cout << "6.bazyabie etelaat az file matni" << endl;
         cout << "0.Exit" << endl;
@@ -265,29 +284,28 @@ void menu(TreeRoot *Root) {
         case 1: {
             isTaskOrSubtask = 1;
             Task *t = new Task;
-            if(t!=nullptr){
+            if (isTaskOrSubtask == 1) {
                 Root->addTask(t);
-                cout<<"Task successfully added :)\n";
-            }else{
+                cout << "Task successfully added :)\n";
+            } else {
                 delete t;
                 t = nullptr;
             }
             break;
         }
-        case 2:{
+        case 2: {
             isTaskOrSubtask = 2;
             Subtask *sub = new Subtask();
-            Task* T = Root->leftChild;
+            Task *T = Root->leftChild;
             string currentTaskName = sub->taskName;
-            while(T != nullptr && T->name != currentTaskName)
+            while (T != nullptr && T->name != currentTaskName)
                 T = T->rightSibling;
-            if(T!=nullptr){
-                T->addSubtask(sub,T);
-                cout<<"Subtask successfully added :)\n";
-            }
-            else{
-                if(isTaskOrSubtask == 2)
-                    cout<<"Oops! Task wasn't found\n";
+            if (T != nullptr) {
+                T->addSubtask(sub, T);
+                cout << "Subtask successfully added :)\n";
+            } else {
+                if (isTaskOrSubtask == 2)
+                    cout << "Oops! Task wasn't found\n";
                 delete sub;
                 sub = nullptr;
             }
@@ -297,8 +315,8 @@ void menu(TreeRoot *Root) {
         //    bazyabi_etelaat();
         //    break;
         case 4:
-           showCloserTask(Root->leftChild);
-           break;
+            showCloserTask(Root->leftChild);
+            break;
         // case 5:
         //    sabt_dar_file();
         //    break;
