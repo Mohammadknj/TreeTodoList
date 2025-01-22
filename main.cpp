@@ -207,7 +207,7 @@ Task *closerTask(Task *T, Task *T1) {
         else if (T->deadline.hour < T1->deadline.hour)
             return T;
         else
-            T->deadline.minute > T1->deadline.minute ? T1 : T;
+            return T->deadline.minute > T1->deadline.minute ? T1 : T;
     }
     if (T->deadline.leftDays > T1->deadline.leftDays)
         return T1;
@@ -224,13 +224,13 @@ public:
     void addTask(Task *t) {
         if (leftChild == nullptr) {
             leftChild = t;
-        } else {
+        }/* else {
             Task *x = leftChild;
             while (x->rightSibling != nullptr) {
                 x = x->rightSibling;
             }
             x->rightSibling = t;
-        }
+        }*/
         t->parent = itself;
         SortTasks(t);
     }
@@ -240,10 +240,13 @@ public:
         Task *t = leftChild;
         while (t->rightSibling != nullptr) {
             if(T == closerTask(t,T)){
-                switching(t,T);
+                insert(t,T);
+                // if(t==leftChild) leftChild = T;
+                return;
             }
             t = t->rightSibling;
         }
+        t->rightSibling = T;
         //     Tn = T->rightSibling;
         //     while (Tn != nullptr) {
         //         t = closerTask(T, Tn);
@@ -255,24 +258,39 @@ public:
         // }
 
     }
-    void switching(Task *T, Task *Tn) {
-        Task *Tpre, *Trs = T->rightSibling, *Tnpre, *Tnrs = Tn->rightSibling;
-        if (T == leftChild)
-            Tpre = nullptr;
-        Task *t = leftChild;
-        while (t->rightSibling != T)
-            t = t->rightSibling;
-        if (Tpre != nullptr)
-            Tpre = t;
-        while (t->rightSibling != Tn)
-            t = t->rightSibling;
-        Tnpre = t;
-        if (Tpre != nullptr)
-            Tpre->rightSibling = Tn;
-        T->rightSibling = Tnrs;
-        Tn->rightSibling = Trs;
-        Tnpre->rightSibling = T;
+    void insert(Task*T,Task*Tn){
+        Tn->rightSibling = T;
+        if(T==leftChild){
+            leftChild = Tn;
+            return;
+        }
+        Task*t=leftChild;
+        while(t->rightSibling!=T)
+            t=t->rightSibling;
+        t->rightSibling=Tn;
     }
+    // void switching(Task *T, Task *Tn) {
+    //     Task *Tpre, *Trs = T->rightSibling, *Tnpre, *Tnrs = Tn->rightSibling;
+    //     Task *t = leftChild;
+    //     if (T == leftChild)
+    //         Tpre = nullptr;
+    //     else
+    //         while (t->rightSibling != T)
+    //             t = t->rightSibling;
+    //     if (Tpre != nullptr)
+    //         Tpre = t;
+    //     while (t->rightSibling != Tn)
+    //         t = t->rightSibling;
+    //     Tnpre = t;
+    //     if (Tpre != nullptr)
+    //         Tpre->rightSibling = Tn;
+    //     Tnpre->rightSibling = T;
+    //     // T->rightSibling = Tnrs;
+    //     // Tn->rightSibling = Trs;
+    //     Task* temp = T->rightSibling;
+    //     T->rightSibling = Tn->rightSibling;
+    //     Tn->rightSibling = temp;
+    // }
 };
 void showCloserTask(Task *T) {
     cout << "Task:\n    Name: " << T->name << ", Description: " << T->description
