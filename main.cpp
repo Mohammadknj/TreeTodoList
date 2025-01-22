@@ -217,36 +217,39 @@ class TreeRoot {
 public:
     Task *itself;
     Task *leftChild;
+    int size;
     TreeRoot() {
         itself = nullptr;
         leftChild = nullptr;
+        size = 0;
     }
     void addTask(Task *t) {
+        t->parent = itself;
+        size++;
         if (leftChild == nullptr) {
             leftChild = t;
-        }/* else {
-            Task *x = leftChild;
-            while (x->rightSibling != nullptr) {
-                x = x->rightSibling;
-            }
-            x->rightSibling = t;
-        }*/
-        t->parent = itself;
-        SortTasks(t);
+        } else {
+            // Task *x = leftChild;
+            // while (x->rightSibling != nullptr) {
+            //     x = x->rightSibling;
+            // }
+            // x->rightSibling = t;
+            SortTasks(t);
+        }
+
     }
     void SortTasks(Task *T) {
-        if (leftChild->rightSibling == nullptr)
-            return;
-        Task *t = leftChild;
-        while (t->rightSibling != nullptr) {
+        Task *t = leftChild,*t1;
+        while (t != nullptr) {
             if(T == closerTask(t,T)){
                 insert(t,T);
                 // if(t==leftChild) leftChild = T;
                 return;
             }
+            t1 = t;
             t = t->rightSibling;
         }
-        t->rightSibling = T;
+        t1->rightSibling = T;
         //     Tn = T->rightSibling;
         //     while (Tn != nullptr) {
         //         t = closerTask(T, Tn);
@@ -268,6 +271,9 @@ public:
         while(t->rightSibling!=T)
             t=t->rightSibling;
         t->rightSibling=Tn;
+        // t=Tn;
+        // while(t->rightSibling!=Tn) t=t->rightSibling;
+        // t->rightSibling=nullptr;
     }
     // void switching(Task *T, Task *Tn) {
     //     Task *Tpre, *Trs = T->rightSibling, *Tnpre, *Tnrs = Tn->rightSibling;
